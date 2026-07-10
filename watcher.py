@@ -46,9 +46,12 @@ with open("debug.json", "w") as f:
 available_slot = False
 
 for day in data.get("days", []):
-    for slot in day.get("spots", []):
-        if slot.get("time") == TARGET_TIME:
-            available_slot = True
+    if day.get("date") == TARGET_DATE:
+        for slot in day.get("spots", []):
+            if slot.get("time") == TARGET_TIME:
+                available_slot = True
+
+print(f"Slot {TARGET_DATE} {TARGET_TIME}: {available_slot}")
 
 
 if available_slot:
