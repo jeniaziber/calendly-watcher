@@ -45,9 +45,7 @@ with open("debug.json", "w") as f:
 day = data["days"][0]
 available = day["status"] == "available"
 
-state = load_state()
-
-if available and not state["available"]:
+if available:
     send(
         f"""🎾 З'явилися вільні місця!
 
@@ -59,4 +57,3 @@ https://calendly.com/subscriptions-bo2bo/tennis?month=2026-07
 """
     )
 
-save_state({"available": available})
