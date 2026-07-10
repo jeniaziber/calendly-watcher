@@ -53,7 +53,6 @@ for day in data.get("days", []):
 
 
 print(f"Slot {TARGET_DATE}: {available_slot}")
-send("✅ Calendly watcher працює")
 
 
 state = load_state()
