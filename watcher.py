@@ -1,6 +1,5 @@
 import json
 import os
-import time
 import requests
 
 from notifier import send
@@ -8,7 +7,6 @@ from config import *
 
 
 STATE_FILE = "state.json"
-CHECK_INTERVAL = 60
 
 
 def load_state():
@@ -26,59 +24,54 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 
-def check_calendar():
-
-    params = {
-        "timezone": TIMEZONE,
-        "diagnostics": "false",
-        "range_start": TARGET_DATE,
-        "range_end": TARGET_DATE,
-        "scheduling_link_uuid": SCHEDULING_UUID,
-    }
-
-    try:
-        response = requests.get(
-            URL,
-            params=params,
-            timeout=30,
-        )
-
-        response.raise_for_status()
-
-        data = response.json()
-
-        print(json.dumps(data, indent=2))
+params = {
+    "timezone": TIMEZONE,
+    "diagnostics": "false",
+    "range_start": TARGET_DATE,
+    "range_end": TARGET_DATE,
+    "scheduling_link_uuid": SCHEDULING_UUID,
+}
 
 
-        available_slot = None
+response = requests.get(
+    URL,
+    params=params,
+    timeout=30,
+)
 
-        for day in data.get("days", []):
+response.raise_for_status()
 
-            if day.get("date") == TARGET_DATE:
+data = response.json()
 
-                for slot in day.get("spots", []):
-
-                    slot_time = slot.get("time")
-
-                    if slot_time in TARGET_TIMES:
-                        available_slot = slot_time
-                        break
+print(json.dumps(data, indent=2))
 
 
-        print(
-            f"Slot {TARGET_DATE}: {available_slot}"
-        )
+available_slot = None
 
 
-        state = load_state()
+for day in data.get("days", []):
 
-        previous_slot = state.get("last_slot")
+    if day.get("date") == TARGET_DATE:
+
+        for slot in day.get("spots", []):
+
+            if slot.get("time") in TARGET_TIMES:
+                available_slot = slot.get("time")
+                break
 
 
-        if available_slot and available_slot != previous_slot:
+print(f"Slot {TARGET_DATE}: {available_slot}")
 
-            send(
-                f"""🎾 З'явився вільний слот!
+
+state = load_state()
+
+previous_slot = state.get("last_slot")
+
+
+if available_slot and available_slot != previous_slot:
+
+    send(
+        f"""🎾 З'явився вільний слот!
 
 📅 Дата: {TARGET_DATE}
 ⏰ Час: {available_slot}
@@ -87,31 +80,9 @@ def check_calendar():
 
 https://calendly.com/subscriptions-bo2bo/tennis?month=2026-07
 """
-            )
-
-
-        save_state(
-            {
-                "last_slot": available_slot
-            }
-        )
-
-
-    except Exception as e:
-
-        print(
-            f"ERROR: {e}"
-        )
-
-
-while True:
-
-    print("Checking Calendly...")
-
-    check_calendar()
-
-    print(
-        f"Waiting {CHECK_INTERVAL} seconds..."
     )
 
-    time.sleep(CHECK_INTERVAL)
+
+save_state({
+    "last_slot": available_slot
+})
