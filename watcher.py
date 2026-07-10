@@ -42,18 +42,23 @@ data = response.json()
 with open("debug.json", "w") as f:
     json.dump(data, f, indent=2)
 
-day = data["days"][0]
-available = day["status"] == "available"
+available_slot = False
 
-if available:
+for day in data.get("days", []):
+    for slot in day.get("spots", []):
+        if slot.get("time") == TARGET_TIME:
+            available_slot = True
+
+
+if available_slot:
     send(
-        f"""🎾 З'явилися вільні місця!
+        f"""🎾 З'явився вільний слот!
 
-📅 {TARGET_DATE}
+📅 Дата: {TARGET_DATE}
+⏰ Час: {TARGET_TIME}
 
-Відкрий негайно:
+Бронюй зараз:
 
 https://calendly.com/subscriptions-bo2bo/tennis?month=2026-07
 """
     )
-
