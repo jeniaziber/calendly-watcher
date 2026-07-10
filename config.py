@@ -23,3 +23,9 @@ URL = (
     f"https://calendly.com/api/booking/event_types/"
     f"{EVENT_UUID}/calendar/range"
 )
+
+if not BOT_TOKEN:
+    raise Exception("BOT_TOKEN missing")
+
+if not CHAT_ID:
+    raise Exception("CHAT_ID missing")
