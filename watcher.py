@@ -56,10 +56,11 @@ print(f"Slot {TARGET_DATE}: {available_slot}")
 
 
 state = load_state()
-previous_available = state.get("available", False)
+
+previous_slot = state.get("last_slot")
 
 
-if available_slot and not previous_available:
+if available_slot and available_slot != previous_slot:
     send(
         f"""🎾 З'явився вільний слот!
 
@@ -73,5 +74,5 @@ https://calendly.com/subscriptions-bo2bo/tennis?month=2026-07
     )
 
 save_state({
-    "available": bool(available_slot)
+    "last_slot": available_slot
 })
