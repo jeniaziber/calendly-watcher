@@ -12,7 +12,12 @@ SCHEDULING_UUID = "cxyq-p94-zkw"
 TIMEZONE = "Europe/Berlin"
 
 TARGET_DATE = "2026-07-12"
-TARGET_TIME = "12:00"
+TARGET_TIMES = [
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00"
+]
 
 URL = (
     f"https://calendly.com/api/booking/event_types/"
