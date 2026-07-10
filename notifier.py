@@ -7,6 +7,7 @@ def send(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
     response = requests.post(
+        response.raise_for_status()
         url,
         json={
             "chat_id": CHAT_ID,
