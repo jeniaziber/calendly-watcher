@@ -37,6 +37,7 @@ response = requests.get(
 response.raise_for_status()
 
 data = response.json()
+print(json.dumps(data, indent=2))
 
 # Зберігаємо відповідь для дебагу
 with open("debug.json", "w") as f:
