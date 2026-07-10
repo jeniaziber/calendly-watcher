@@ -43,18 +43,16 @@ print(json.dumps(data, indent=2))
 with open("debug.json", "w") as f:
     json.dump(data, f, indent=2)
 
-available_slot = False
-
-available_slot = False
+available_slot = None
 
 for day in data.get("days", []):
     if day.get("date") == TARGET_DATE:
         for slot in day.get("spots", []):
-            if slot.get("time") == TARGET_TIME:
-                available_slot = True
+            if slot.get("time") in TARGET_TIMES:
+                available_slot = slot.get("time")
 
 
-print(f"Slot {TARGET_DATE} {TARGET_TIME}: {available_slot}")
+print(f"Slot {TARGET_DATE}: {available_slot}")
 
 
 state = load_state()
@@ -66,7 +64,7 @@ if available_slot and not previous_available:
         f"""🎾 З'явився вільний слот!
 
 📅 Дата: {TARGET_DATE}
-⏰ Час: {TARGET_TIME}
+⏰ Час: {available_slot}
 
 Бронюй зараз:
 
@@ -74,7 +72,6 @@ https://calendly.com/subscriptions-bo2bo/tennis?month=2026-07
 """
     )
 
-
 save_state({
-    "available": available_slot
+    "available": bool(available_slot)
 })
