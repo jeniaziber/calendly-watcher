@@ -45,16 +45,23 @@ with open("debug.json", "w") as f:
 
 available_slot = False
 
+available_slot = False
+
 for day in data.get("days", []):
     if day.get("date") == TARGET_DATE:
         for slot in day.get("spots", []):
             if slot.get("time") == TARGET_TIME:
                 available_slot = True
 
+
 print(f"Slot {TARGET_DATE} {TARGET_TIME}: {available_slot}")
 
 
-if available_slot:
+state = load_state()
+previous_available = state.get("available", False)
+
+
+if available_slot and not previous_available:
     send(
         f"""🎾 З'явився вільний слот!
 
@@ -66,3 +73,8 @@ if available_slot:
 https://calendly.com/subscriptions-bo2bo/tennis?month=2026-07
 """
     )
+
+
+save_state({
+    "available": available_slot
+})
